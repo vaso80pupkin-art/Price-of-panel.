@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1110">
+  <title>Бамбук | Калькулятор стоимости</title>
+  <style>
+    :root { --bg:#08100f; --surface:#101b19; --surface-2:#172521; --line:#29423a; --text:#eef7f0; --muted:#9ab0a5; --accent:#b7f34a; --accent-2:#61d69b; --danger:#ff8a7a; --shadow:0 14px 30px rgba(0,0,0,.34); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; min-width:320px; color:var(--text); background:radial-gradient(circle at 10% 0%,#1b3b2f 0,transparent 35%),var(--bg); font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    button,input,select,textarea { font:inherit; }
+    button { cursor:pointer; border:0; color:#09120e; font-weight:800; }
+    .app { max-width:780px; margin:auto; padding:18px 14px 40px; }
+    header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:18px; }
+    .eyebrow { color:var(--accent); text-transform:uppercase; letter-spacing:.12em; font-size:11px; font-weight:900; }
+    h1,h2,h3,p { margin:0; } h1 { font-size:clamp(27px,8vw,42px); line-height:1; margin-top:5px; letter-spacing:-.04em; } h2 { font-size:19px; } h3 { font-size:15px; margin-bottom:8px; }
+    .header-mark { width:46px; height:46px; border-radius:16px; background:linear-gradient(145deg,#d8ff72,#4aaf75); box-shadow:inset 0 2px 1px #fff8,0 9px 22px #75e45d33; display:grid; place-items:center; font-size:25px; }
+    .card { background:linear-gradient(145deg,#162520dd,#0e1816e8); border:1px solid var(--line); border-radius:22px; padding:17px; margin:12px 0; box-shadow:var(--shadow); }
+    .card-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:13px; } .hint { color:var(--muted); font-size:12px; }
+    textarea,input,select { width:100%; border:1px solid #335247; background:#0b1513; color:var(--text); border-radius:13px; padding:12px 13px; outline:none; transition:.2s ease; }
+    textarea { min-height:105px; resize:vertical; } input:focus,select:focus,textarea:focus { border-color:var(--accent-2); box-shadow:0 0 0 3px #61d69b1c; }
+    label { display:block; color:var(--muted); font-size:12px; font-weight:700; margin:0 0 6px; } .field { margin-bottom:12px; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .grid-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-top:10px; } .actions .primary { grid-column:1/-1; }
+    .btn { min-height:46px; padding:11px 13px; border-radius:14px; background:linear-gradient(145deg,#d8ff6c,#86d854); box-shadow:inset 0 2px 1px #ffffff8c,0 7px 0 #3a7e42,0 12px 23px #72e15d24; transition:transform .18s,box-shadow .18s,filter .18s; } .btn:hover { filter:brightness(1.08); box-shadow:inset 0 2px 1px #ffffffa8,0 7px 0 #3a7e42,0 0 20px #a9ff654d; } .btn:active { transform:translateY(5px); box-shadow:inset 0 2px 1px #ffffff66,0 2px 0 #3a7e42; } .btn.secondary { background:linear-gradient(145deg,#273d35,#1a2a25); color:var(--text); box-shadow:inset 0 1px 1px #ffffff1c,0 5px 0 #07100d; } .btn.small { min-height:38px; padding:8px 10px; font-size:12px; }
+    .segmented { display:flex; gap:8px; padding:4px; border-radius:15px; background:#0b1513; border:1px solid var(--line); } .segmented label { flex:1; margin:0; color:var(--muted); text-align:center; cursor:pointer; } .segmented input { display:none; } .segmented span { display:block; border-radius:11px; padding:9px 5px; } .segmented input:checked+span { background:var(--accent); color:#0b1510; }
+    .switchline,.checkline { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #29423a66; } .switchline:last-child,.checkline:last-child { border-bottom:0; } .switchline input,.checkline input { width:19px; height:19px; accent-color:var(--accent); } .switchline span,.checkline span { flex:1; } .price { color:var(--accent); white-space:nowrap; font-size:12px; }
+    .range-row { display:grid; grid-template-columns:1fr 86px; gap:10px; align-items:center; } input[type=range] { accent-color:var(--accent); padding:0; } .range-value { text-align:right; color:var(--accent); font-weight:900; }
+    .hidden { display:none !important; } .subtle { color:var(--muted); } .pill { background:#b7f34a18; border:1px solid #b7f34a55; color:var(--accent); padding:5px 8px; border-radius:999px; font-size:11px; font-weight:800; }
+    .result { border-color:#78d98399; background:linear-gradient(145deg,#183329,#10231c); } .total { font-size:34px; font-weight:950; color:var(--accent); letter-spacing:-.04em; } .result-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin:14px 0; } .metric { background:#0b1713aa; border:1px solid #315345; border-radius:14px; padding:10px; } .metric b { display:block; font-size:18px; margin-top:2px; } .metric small { color:var(--muted); }
+    .warning { margin-top:12px; padding:11px 12px; border-radius:12px; background:#ff8a7a1a; border:1px solid #ff8a7a66; color:#ffc1b8; } .ok { color:var(--accent-2); } footer { color:var(--muted); text-align:center; font-size:12px; padding:18px 8px; }
+    .modal-backdrop { position:fixed; inset:0; background:#000b; display:grid; place-items:end center; padding:14px; z-index:5; } .modal { width:min(620px,100%); background:#14221e; border:1px solid var(--line); border-radius:22px; padding:18px; box-shadow:0 20px 60px #000b; } .modal p { color:var(--muted); margin:8px 0 16px; }
+    @media (min-width:650px) { .app { padding-top:30px; } .two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:start; } .two-col .card { margin:0 0 12px; } }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header><div><div class="eyebrow">Предварительный просчет</div><h1>Бамбук<span style="color:var(--accent)">.</span></h1><p class="subtle">Калькулятор панелей для мобильного телефона</p></div><div class="header-mark">竹</div></header>
+
+  <section class="card">
+    <div class="card-head"><h2>Быстрый ввод</h2><span class="pill">офлайн</span></div>
+    <label for="description">Вставьте описание объекта</label>
+    <textarea id="description" placeholder="Например: Стена 2.8 на 2.9, окно 1.2х1.2"></textarea>
+    <div class="actions"><button class="btn secondary" id="voiceBtn">🎙 Голосовой ввод</button><button class="btn secondary" id="fileBtn">📄 Загрузить файл</button><input id="fileInput" type="file" accept=".txt,text/plain" class="hidden"><button class="btn secondary" id="assistantBtn">🧭 Помощник</button><button class="btn secondary" id="aiBtn">✨ Интерактивный ИИ</button><button class="btn primary" id="calculateBtn">Рассчитать стоимость</button></div>
+  </section>
+
+  <div class="two-col">
+    <section class="card">
+      <div class="card-head"><h2>Параметры объекта</h2></div>
+      <div class="field"><label>Вариант расчета</label><div class="segmented"><label><input type="radio" name="calcMode" value="floor" checked><span>По полу</span></label><label><input type="radio" name="calcMode" value="wall"><span>По стенам</span></label></div></div>
+      <div class="field"><label for="surfaceType">Тип поверхности</label><select id="surfaceType"><option>Стена</option><option>Потолок</option><option>Дверь</option><option>Другое</option></select></div>
+      <div class="field" id="floorField"><label for="floorArea">Площадь пола, м²</label><input id="floorArea" type="number" min="0" step="0.01" value="20"></div>
+      <div id="wallFields" class="hidden"><div class="grid"><div class="field"><label for="wallLength">Длина стены L, м</label><input id="wallLength" type="number" min="0" step="0.01" value="4"></div><div class="field"><label for="wallHeight">Высота стены H, м</label><input id="wallHeight" type="number" min="0" step="0.01" value="2.8"></div></div></div>
+      <div class="grid"><div class="field"><label for="windows">Окон, шт.</label><input id="windows" type="number" min="0" step="1" value="0"></div><div class="field"><label for="doors">Дверей, шт.</label><input id="doors" type="number" min="0" step="1" value="0"></div></div>
+      <div class="grid"><div class="field"><label for="windowPerimeter">Периметр окна, м</label><input id="windowPerimeter" type="number" min="0" step="0.1" value="4.8"></div><div class="field"><label for="doorPerimeter">Периметр двери, м</label><input id="doorPerimeter" type="number" min="0" step="0.1" value="5.4"></div></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>Материалы</h2><label class="switchline" style="padding:0;border:0"><input id="partnerMode" type="checkbox"><span>Партнерские цены</span></label></div>
+      <div class="field"><label for="panelSelect">Панель</label><select id="panelSelect"></select></div>
+      <div class="field"><label for="louverSelect">Луверы (опционально)</label><select id="louverSelect"><option value="">Не добавлять</option></select></div>
+      <h3>Профили и доп. позиции</h3>
+      <label class="checkline"><input type="checkbox" id="innerCorner"><span>Внутренний угловой</span><b class="price" data-price="innerCorner"></b></label>
+      <label class="checkline"><input type="checkbox" id="outerCorner"><span>Наружный угловой</span><b class="price" data-price="outerCorner"></b></label>
+      <label class="checkline"><input type="checkbox" id="lProfile"><span>Г-образный</span><b class="price" data-price="lProfile"></b></label>
+      <label class="checkline"><input type="checkbox" id="led"><span>Светодиодная лента</span><b class="price">Уточняется</b></label>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="card-head"><h2>Дополнительные услуги</h2><span class="hint">отметьте нужное</span></div>
+    <div id="services"></div>
+    <div class="grid" style="margin-top:10px"><div class="field"><label for="liftHours">Подъем материала, часов</label><input id="liftHours" type="number" min="0" step="1" value="0"></div><div class="field"><label for="radialAngles">Радиальные углы, шт.</label><input id="radialAngles" type="number" min="0" step="1" value="0"></div></div>
+    <label class="checkline"><input type="checkbox" id="hiddenLouverDoor"><span>Обшивка луверами двери скрытого монтажа</span><b class="price">Требуется замер</b></label>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Настройки стоимости</h2></div>
+    <div class="field"><label>Скидка</label><div class="range-row"><input id="discount" type="range" min="0" max="100" value="0"><output id="discountOut" class="range-value">0%</output></div></div>
+    <div class="field"><label>Запас на подрезку</label><div class="range-row"><input id="waste" type="range" min="0" max="30" value="0"><output id="wasteOut" class="range-value">0%</output></div></div>
+    <div class="field"><label>НДС</label><div class="range-row"><input id="vat" type="range" min="0" max="16" value="16"><output id="vatOut" class="range-value">16%</output></div></div>
+    <div class="field"><label>Доставка</label><div class="range-row"><input id="delivery" type="range" min="15000" max="30000" step="1000" value="15000"><output id="deliveryOut" class="range-value">15 000 тг</output></div></div>
+  </section>
+
+  <section class="card result" id="resultCard">
+    <div class="card-head"><h2>Итог расчета</h2><span id="resultStatus" class="pill">готов к расчету</span></div>
+    <div class="total" id="total">0 тг</div><div class="subtle">с учетом скидки, НДС и доставки</div>
+    <div class="result-grid"><div class="metric"><small>Площадь</small><b id="outArea">—</b></div><div class="metric"><small>Панели</small><b id="outPanels">—</b></div><div class="metric"><small>Соединительный профиль</small><b id="outJoin">—</b></div><div class="metric"><small>Завершающий профиль</small><b id="outEnd">—</b></div><div class="metric"><small>Клей</small><b id="outGlue">—</b></div><div class="metric"><small>Окна / двери</small><b id="outOpenings">—</b></div></div>
+    <div id="breakdown" class="subtle"></div><div id="minWarning"></div>
+    <button class="btn" id="copyBtn" style="width:100%;margin-top:14px">Скопировать расчет</button>
+  </section>
+  <footer>Предварительный расчет. Точная стоимость — после замера.</footer>
+</div>
+
+<div id="modalRoot" class="hidden"></div>
+<script>
+'use strict';
+const AI_CONFIG = { enabled: false, useServer: true, serverUrl: 'http://localhost:3000' };
+function callAI() { return null; }
+
+const PANELS = [
+ ['H006-H',50000,35000],['H198-Y',55000,38500],['H003-H',50000,35000],['K01-194N',50000,35000],['K01-204N',50000,35000],['K01-203N',50000,35000],['K01-174X',50000,35000],['K01-176X',50000,35000],['M/P-089R',65000,45500],['H127-PP2',65000,45500],['H234-YP',55000,38500],['H072-YP',55000,38500],['H205-YP',55000,38500],['K01-187N',50000,35000],['K01-17N',50000,35000],['K01-135X',50000,35000],['K01-136X',50000,35000],['H098-F',55000,38500],['H093-F',55000,38500],['K01-38M',55000,38500],['K01-53N',50000,35000],['H149-PP1',55000,38500],['K01-03-22X',50000,35000],['H241-YP',55000,38500],['K01-54H',50000,35000],['M/P-001U',55000,38500],['K01-18N',50000,35000],['M/P-065C',65000,45500],['M/P-093R',65000,45500],['M/P-092R',65000,45500],['254M',55000,38500],['M/Q-96V',65000,45500],['M/Q-95V',65000,45500],['M/P-100Q',55000,38500],['M/H-271Y',55000,38500],['M/H-270Y',55000,38500],['K01-110X',50000,35000],['K01-171X',50000,35000],['H236-YP',55000,38500],['M/H-215Y',55000,38500],['M/K01-HM005R',65000,45500],['K01-62H',50000,35000],['K01-63H',50000,35000],['K01-120X',50000,35000],['K01-127X',50000,35000],['K01-124X',50000,35000],['K01-133X',50000,35000],['QK098X',50000,35000],['QK099X',55000,38500],['K01-277A',55000,38500],['K01-140X',50000,35000],['K01-206N',50000,35000],['K01-212H',50000,35000],['K01-247N',55000,38500],['M/K02-043T',55000,38500],['M/P-028K',65000,45500],['M/Q-105A',65000,45500]
+];
+const LOUVERS = [
+ ['140BLB K01-17N',9000,6300],['160GS K01-17N',10000,7000],['150XCC K01-38M',10000,7000],['160GS H006-H',10000,7000],['150XCC H198-Y',10000,7000],['150XCC K01-204N',8000,5600],['90WYCC K01-53N',8000,5600],['150XCC K01-03-22X',10000,7000],['150SXWGS H003-H',10000,7000],['150SXWGS K01-203N',10000,7000],['139XGS K01-194N',10000,7000],['150XCC K01-194N',10000,7000],['139XGS K01-110X',9000,6300],['139XGS K01-171X',9000,6300],['206SXB H093-F',13000,9100],['206SXB H098-F',13000,9100],['226YHB H205-YP',15000,10500],['226YHB H234-YP',15000,10500],['140BLB K01-187N',10000,7000],['140BLB K01-18N',10000,7000],['140BLB K01-54H',8000,5600],['90WYCC H241-YP',10000,7000],['206SXB 254M',15000,10500],['140BLB K01-136X',9000,6300],['128CHBSIZE K01-135X',8000,5600],['160GS H003-H',10000,7000],['160SXZHGS M/H-271Y',12000,8400],['139XGS M/H-270Y',12000,8400],['128CHB H236-YP',15000,10500],['180ZSB K01-62H',12000,8400],['196ZHCCB K01-63H',12000,8400],['150XCC K01-206N',10000,7000],['150XCC K01-127X',10000,7000],['150XCC K01-124X',10000,7000],['150XCC K01-133X',10000,7000],['150SXWGS H006-H',10000,7000],['90WYCC K01-212H',10000,7000],['90WYCC K01-120X',10000,7000],['120BYB K01-247N',13000,9100]
+];
+const PRICES = { joining:[3500,2450], finishing:[3000,2100], innerCorner:[5000,3500], outerCorner:[5000,3500], lProfile:[5000,3500], glue:[1500,1300], radial:[30000,30000], liftBase:[16000,16000], liftHour:[8000,8000] };
+const SERVICES = [
+ ['wall3m','Монтаж на стену цельными 3м','м²',6000],['split','Монтаж с разбивкой (верт/горизонт)','м²',7000],['customSplit','Монтаж с произвольной разбивкой','м²',8000],['noProfiles','Монтаж без профилей (фреза)','м²',8000],['panel8','Монтаж панелей 8мм','м²',10000],['ceiling','Монтаж на потолок','м²',10000],['doorSlope','Дверные откосы без фрезы','м²',5000],['doorSlopeMill','Дверные откосы с фрезой','м²',6000],['windowSlope','Оконные откосы без фрезы','п.м',5000],['windowSlopeMill','Оконные откосы с фрезой','п.м',6000],['primer','Грунтовка стен','м²',6000],['tvBox','Монтаж ГКЛ-короба под ТВ','м²',6000],['hiddenDoor','Обшивка двери скрытого монтажа панелями','дверь',25000]
+];
+const $ = id => document.getElementById(id); const money = n => `${Math.round(n||0).toLocaleString('ru-RU')} тг`; const num = id => Math.max(0,Number($(id).value)||0); const price = (arr) => arr[$('partnerMode').checked?1:0];
+function fillSelects(){ $('panelSelect').innerHTML=PANELS.map((x,i)=>`<option value="${i}">${x[0]} — ${money(x[1])} / ${money(x[2])}</option>`).join(''); $('louverSelect').innerHTML='<option value="">Не добавлять</option>'+LOUVERS.map((x,i)=>`<option value="${i}">${x[0]} — ${money(x[1])} / ${money(x[2])}</option>`).join(''); updatePriceLabels(); }
+function updatePriceLabels(){ const map={innerCorner:'innerCorner',outerCorner:'outerCorner',lProfile:'lProfile'}; Object.entries(map).forEach(([id,key])=>document.querySelector(`[data-price="${id}"]`).textContent=money(price(PRICES[key]))); }
+function renderServices(){ $('services').innerHTML=SERVICES.map(([id,name,unit,p])=>`<label class="checkline"><input type="checkbox" data-service="${id}"><span>${name}<small class="subtle"> (${unit})</small></span><b class="price">${money(p)}</b></label>`).join(''); }
+function parseText(){ const t=$('description').value.toLowerCase().replace(/,/g,'.'); const sizes=[...t.matchAll(/(\d+(?:\.\d+)?)\s*(?:на|x|х|×)\s*(\d+(?:\.\d+)?)/g)]; const wall=sizes.find(m=>/стен|потол|площад/.test(t))||sizes[0]; if(wall){ $('wallLength').value=wall[1]; $('wallHeight').value=wall[2]; document.querySelector('input[value="wall"]').checked=true; toggleMode(); } const area=t.match(/(\d+(?:\.\d+)?)\s*(?:кв\.?\s*м|м2|м²)/); if(area && !wall){ $('floorArea').value=area[1]; } const w=t.match(/(\d+)\s*(?:окн|окон)/); const d=t.match(/(\d+)\s*(?:двер|дверей)/); if(w)$('windows').value=w[1]; if(d)$('doors').value=d[1]; if(/окно/.test(t)&&!w)$('windows').value=1; if(/двер/.test(t)&&!d)$('doors').value=1; calculate(); }
+function toggleMode(){ const wall=document.querySelector('input[name="calcMode"]:checked').value==='wall'; $('wallFields').classList.toggle('hidden',!wall); $('floorField').classList.toggle('hidden',wall); }
+function serviceTotal(area, windows, doors){ let total=0; document.querySelectorAll('[data-service]:checked').forEach(el=>{ const item=SERVICES.find(x=>x[0]===el.dataset.service); let qty=area; if(item[0].includes('Slope')) qty=item[0].includes('window')?windows*4.8:doors*5.4; if(item[0]==='hiddenDoor') qty=doors; let unit=item[3]; if(item[0]==='windowSlope' && windows>=4)unit=4000; if(item[0]==='windowSlopeMill' && windows>=4)unit=5000; if(item[0]==='hiddenDoor' && doors>=4)unit=20000; total+=qty*unit; }); const hours=num('liftHours'); if(hours) total+=PRICES.liftBase[0]+Math.max(0,hours-2)*PRICES.liftHour[0]; total+=num('radialAngles')*PRICES.radial[0]; return total; }
+function calculate(){ const wall=document.querySelector('input[name="calcMode"]:checked').value==='wall'; const area=wall?num('wallLength')*num('wallHeight'):num('floorArea'); const L=wall?num('wallLength'):0,H=wall?num('wallHeight'):0; const openingPerimeter=num('windows')*num('windowPerimeter')+num('doors')*num('doorPerimeter'); const basePanels=Math.ceil(area/(3*1.22)); const panels=Math.ceil(basePanels*(1+num('waste')/100)); const joining=wall?Math.max(0,Math.ceil(L/1.22)-1)*Math.ceil(H/2.99):0; const finishing=wall?Math.ceil((2*L+2*H+openingPerimeter)/2.99):0; const glue=Math.ceil(panels*1.5); const panelPrice=price(PANELS[$('panelSelect').value]||PANELS[0]); let materials=panels*panelPrice+joining*price(PRICES.joining)+finishing*price(PRICES.finishing)+glue*price(PRICES.glue); if($('innerCorner').checked)materials+=price(PRICES.innerCorner); if($('outerCorner').checked)materials+=price(PRICES.outerCorner); if($('lProfile').checked)materials+=price(PRICES.lProfile); if($('louverSelect').value!=='')materials+=(panels*price(LOUVERS[$('louverSelect').value])); const services=serviceTotal(area,num('windows'),num('doors')); const subtotal=materials+services; const discount=subtotal*num('discount')/100; const afterDiscount=subtotal-discount; const vat=afterDiscount*num('vat')/100; const delivery=num('delivery'); const total=afterDiscount+vat+delivery; $('outArea').textContent=area.toFixed(2)+' м²'; $('outPanels').textContent=panels+' шт.'; $('outJoin').textContent=joining+' шт.'; $('outEnd').textContent=finishing+' шт.'; $('outGlue').textContent=glue+' шт.'; $('outOpenings').textContent=`${num('windows')} / ${num('doors')}`; $('total').textContent=money(total); $('breakdown').innerHTML=`Материалы: <b>${money(materials)}</b> · Услуги: <b>${money(services)}</b><br>Скидка: <b>−${money(discount)}</b> · НДС: <b>${money(vat)}</b> · Доставка: <b>${money(delivery)}</b>`; $('minWarning').innerHTML=total<50000?'<div class="warning">Итог ниже минимальной суммы заказа — 50 000 тг.</div>':'<div class="ok" style="margin-top:12px">Минимальная сумма заказа соблюдена.</div>'; $('resultStatus').textContent='расчет обновлен'; save(); return {area,panels,joining,finishing,glue,materials,services,discount,vat,delivery,total}; }
+function save(){ const data={}; document.querySelectorAll('input,select,textarea').forEach(el=>{if(el.id)data[el.id]=el.type==='checkbox'?el.checked:el.value;}); localStorage.setItem('bambooCalculator',JSON.stringify(data)); }
+function restore(){ try{const d=JSON.parse(localStorage.getItem('bambooCalculator')||'{}'); Object.entries(d).forEach(([id,v])=>{const el=$(id);if(!el)return; if(el.type==='checkbox')el.checked=v; else el.value=v;});}catch(e){} toggleMode(); updateRangeLabels(); }
+function updateRangeLabels(){ [['discount','%'],['waste','%'],['vat','%'],['delivery',' тг']].forEach(([id,s])=>$(id+'Out').textContent=(id==='delivery'?money(num(id)):num(id)+s)); }
+function openModal(title,text,buttons=[['Закрыть','close']]){ $('modalRoot').className='modal-backdrop'; $('modalRoot').innerHTML=`<div class="modal"><h2>${title}</h2><p>${text}</p><div class="actions">${buttons.map(([t,a])=>`<button class="btn ${a==='close'?'secondary':''}" data-modal="${a}">${t}</button>`).join('')}</div></div>`; $('modalRoot').querySelectorAll('[data-modal]').forEach(b=>b.onclick=()=>{if(b.dataset.modal==='close'){$('modalRoot').className='hidden';}else assistantStep(b.dataset.modal);}); }
+function assistantStep(step){ if(step==='start')openModal('Шаг 1 из 4','Как рассчитываем?',[['По площади пола','floor'],['По размерам стены','wall']]); else if(step==='floor'){document.querySelector('input[value="floor"]').checked=true;toggleMode();$('modalRoot').className='hidden';openModal('Шаг 2 из 4','Введите площадь пола в основной форме, затем нажмите «Далее».',[['Готово','close']]);} else if(step==='wall'){document.querySelector('input[value="wall"]').checked=true;toggleMode();$('modalRoot').className='hidden';openModal('Шаг 2 из 4','Введите длину и высоту стены в основной форме, затем нажмите «Готово».',[['Готово','close']]);} }
+$('fileBtn').onclick=()=>$('fileInput').click(); $('fileInput').onchange=e=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=()=>{$('description').value=r.result;parseText();};r.readAsText(f);}}; $('voiceBtn').onclick=()=>{const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Speech){openModal('Голосовой ввод','Ваш браузер не поддерживает Web Speech API.');return;} const rec=new Speech();rec.lang='ru-RU';rec.onresult=e=>{$('description').value=e.results[0][0].transcript;parseText();};rec.start();}; $('description').addEventListener('blur',parseText); $('calculateBtn').onclick=calculate; $('assistantBtn').onclick=()=>openModal('Интерактивный помощник','Пройдем расчет короткими шагами.',[['Начать','start'],['Закрыть','close']]); $('aiBtn').onclick=()=>openModal('Интерактивный ИИ','В разработке. Сейчас доступен сценарный помощник без подключения нейросети.'); $('partnerMode').onchange=()=>{updatePriceLabels();calculate();}; document.querySelectorAll('input[name="calcMode"]').forEach(x=>x.onchange=()=>{toggleMode();calculate();}); document.querySelectorAll('input[type=range]').forEach(x=>x.oninput=()=>{updateRangeLabels();calculate();}); document.querySelectorAll('input,select').forEach(x=>x.addEventListener('change',()=>{if(x.id!=='fileInput')calculate();})); $('copyBtn').onclick=()=>{const r=calculate();const text=`ПРЕДВАРИТЕЛЬНЫЙ РАСЧЕТ\nПлощадь: ${r.area.toFixed(2)} м²\nПанели: ${r.panels} шт.\nСоединительный профиль: ${r.joining} шт.\nЗавершающий профиль: ${r.finishing} шт.\nКлей: ${r.glue} шт.\nМатериалы: ${money(r.materials)}\nУслуги: ${money(r.services)}\nСкидка: -${money(r.discount)}\nНДС: ${money(r.vat)}\nДоставка: ${money(r.delivery)}\nИТОГО: ${money(r.total)}\n\nПредварительный расчет. Точная стоимость — после замера.`; navigator.clipboard?.writeText(text).then(()=>openModal('Готово','Расчет скопирован. Его можно отправить в WhatsApp.')).catch(()=>openModal('Текст расчета',text));};
+fillSelects(); renderServices(); restore(); updateRangeLabels(); calculate();
+</script>
+</body>
+</html>
